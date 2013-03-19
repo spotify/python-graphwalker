@@ -1,0 +1,14 @@
+1 Start
+2 v_a
+3 v_b
+4 v_c
+5 v_d
+6 v_e
+#
+1 2 e_once
+2 3 e_eb
+2 4 e_ac
+3 5 e_bd
+4 5 e_cd
+5 6 e_de
+6 2 e_ea

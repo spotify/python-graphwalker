@@ -1,0 +1,2 @@
+
+v1.0.2, 2013-03-19 -- Initial open source release.

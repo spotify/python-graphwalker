@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2013 Spotify AB
+digraph abz {
+  node [shape=box];
+
+  n0 [label="Start"];
+  n1 [label=v_a];
+  n2 [label=v_b];
+  n3 [label=v_c];
+
+  n0 -> n1 [label="e_zero"];
+  n1 -> n2 [label="e_one"];
+  n2 -> n3 [label="e_two"];
+}

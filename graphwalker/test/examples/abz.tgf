@@ -1,0 +1,8 @@
+n0 Start
+n1 v_a
+n2 v_b
+n3 v_c
+#
+n0 n1 e_zero
+n1 n2 e_one
+n2 n3 e_two
