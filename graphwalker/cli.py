@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013 Spotify AB
 import time
+import sys
 
 import docopt
 
@@ -65,6 +66,8 @@ Example:
 
 
 def run(args):
+    sys.path.append('')
+    
     reporter = reporting.build(args.get('--reporter') or [])
     suite_name = args.get('--suite-name') or 'graphwalker'
 
