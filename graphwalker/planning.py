@@ -339,11 +339,15 @@ q(uit)  End the interactive session
                 print >>self.out, self.help
 
             elif i.strip().isdigit():
-                edge = edges[int(i.strip())]
+                index = int(i.strip())
+                if index >= len(edges):
+                    print >>self.out, 'huh?'
+                else:
+                    edge = edges[index]
 
-                self.vert = self.step(self.vert, edge)
-                yield edge
-                yield self.vert
+                    self.vert = self.step(self.vert, edge)
+                    yield edge
+                    yield self.vert
 
 
 class MasterPlan(Planner):

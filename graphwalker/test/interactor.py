@@ -144,7 +144,7 @@ class Interactor(object):
 
     def e_enter(self):
         self.push('\n')
-        self.expect('huh?\n')
+        self.expect('huh?')
 
     def e_follow_0(self):
         self.push('0\n')
@@ -153,6 +153,10 @@ class Interactor(object):
                 'Begin step' in out and
                 '[stdout]\x1b[32mstep_begin\x1b[0m\n' in out and
                 '\nPassed step' in out))
+
+    def e_follow_9(self):
+        self.push('9\n')
+        self.expect('huh?')
 
     def e_debug(self):
         self.push('d\n')
