@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013 Spotify AB
+import cStringIO
 import signal
 import unittest
 
@@ -333,6 +334,46 @@ class TestGoto(unittest.TestCase):
 class TestInteractive(unittest.TestCase):
     def test_ctor_smoke(self):
         self.assert_(planning.Interactive())
+
+    def build(self, result='9\n'):
+        pi = planning.Interactive()
+        pi.out = cStringIO.StringIO()
+
+        if isinstance(result, BaseException):
+            def raiser():
+                raise result
+            pi.raw_input = raiser
+        else:
+            pi.raw_input = result if callable(result) else (lambda: result)
+
+        return pi
+
+    def test_choose_choice(self):
+        pi = self.build('9\n')
+        self.assertEqual(pi.choose(pi, 'abc'), '9\n')
+
+    def test_choose_alts(self):
+        pi = self.build()
+        alts = ['fleb', 'mefl', 'blof']
+        pi.choose(pi, alts)
+        out = pi.out.getvalue()
+        self.assert_(all(item in out for item in alts),
+                     'All items should be listed before prompt')
+
+    def test_choose_sigint(self):
+        pi = self.build(KeyboardInterrupt())
+        self.assertEqual(pi.choose(pi, 'abc'), None)
+
+    def test_choose_eof(self):
+        pi = self.build(EOFError())
+        self.assertEqual(pi.choose(pi, 'abc'), None)
+
+    def test_choose_other_exception(self):
+        l = [5, 1, 0, 0]
+        pi = self.build(lambda: 1 / l.pop() and '0\n')
+        self.assertEqual(pi.choose(pi, 'abc'), '0\n')
+        self.assertEqual(l, [5])
+        self.assert_('huh?' in pi.out.getvalue())
 
 
 class TestMasterPlan(unittest.TestCase):
