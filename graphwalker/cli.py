@@ -67,7 +67,7 @@ Example:
 
 def run(args):
     sys.path.append('')
-    
+
     reporter = reporting.build(args.get('--reporter') or [])
     suite_name = args.get('--suite-name') or 'graphwalker'
 
