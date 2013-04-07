@@ -29,6 +29,11 @@ Notably, there are a few differences:
   don't make sense.
 
 
+.. figure:: graphwalker/test/examples/selftest.png
+
+   The graph for the self-test of the Interactive planner.
+
+
 Overall design
 ==============
 The idea that has driven the design is that the graph-problems are quite
