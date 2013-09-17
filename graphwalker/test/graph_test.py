@@ -60,7 +60,11 @@ def build_graph(spec):
         g0.add_vert(v)
 
     for f, t in spec.split():
-        g0.add_edge(g0.V[f], g0.V[t])
+        e_id = '%s-%s' % (f, t)
+        if e_id in g0.E:
+            g0.copy_edge(g0.E[e_id])
+        else:
+            g0.add_edge(g0.V[f], g0.V[t], e_id)
 
     return g0
 
