@@ -7,7 +7,7 @@ machine graphs. Graphwalker reads FSMs specified by graphs, plans
 paths, calls model methods by name from graph labels and reports
 progress and results.
 
-While conceptually derived from the Graphwalker project,
+While conceptually derived from the Graphwalker project[gw],
 (implemented in java) this is a complete reimplementation from that
 initial concept.
 
@@ -26,6 +26,12 @@ Notably, there are a few differences:
     and combine code to implement the different components of the
     design. Some combinations don't make sense.
 
+  - Instead of the SWITCH_MODEL keywords in the original, this version
+    simply allows you to load multiple graphs and stitches them
+    together where id:s and labels match.
+
+Generally, these simplifications makes the resulting graph much easier
+to reason about.
 
 ![The graph for the self-test of the Interactive planner.
 ](graphwalker/test/examples/selftest.png)
@@ -84,7 +90,16 @@ command line:
 If the object found is callable, it will be called, with any
 arguments supplied, and the result used.
 
-## Formats
+## Model combining
+
+Models can now be broken down into sub-graphs that can be combined at
+loading time. In order for this to make sense, some nodes (and
+optionally edges) need to have the same id and label, and these will
+be considered the same in the new graph. They must match on both id
+and label, but they are permitted to have different attributes like
+weight, as long as those attributes don't conflict.
+
+## Graph formats
 
 Currently, Python Graphwalker understands a few simple file
 formats:
@@ -140,7 +155,10 @@ planners keep their own random number generators.
 The simplest planner, Random, traverses the graph by randomly
 choosing an edge and visiting that edge and the target vertex until
 the StopCond is satisfied. It does not check the StopCond between
-edge and vertex.
+edge and vertex. Edges may be weighted to skew the edge choices, by
+adding attributes like "weight=0.3" to a second line of edge labels.
+If used, weights should sum to 1.0. If only some edges have weights,
+the remaining edges will share the remaining weight equally.
 
 #### Example
 `graphwalker --stopcond=Coverage --planner=Random:seed=1337 model.dot`
@@ -359,3 +377,4 @@ incorporate everything we learned from the first.
 The license we have chosen is the Apache License, version 2.0. You
 should find the full text in the file named "LICENSE.txt".
 
+[gw]: http://graphwalker.org/
