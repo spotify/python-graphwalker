@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013 Spotify AB
 import os
+import subprocess
 import unittest
 
 from graphwalker import planning
@@ -12,6 +13,8 @@ from graphwalker import graph
 
 class TestInteraction(unittest.TestCase):
     def setUp(self):
+        here = os.path.normpath(os.path.join(__file__, '..', '..'))
+        self.argl = ['python', os.path.join(here, 'cli.py')]
         self._old_pythonpath = os.environ.get('PYTHONPATH', None)
         os.environ['PYTHONPATH'] = '.'
 
@@ -21,6 +24,15 @@ class TestInteraction(unittest.TestCase):
             os.environ['PYTHONPATH'] = old
         else:
             del os.environ['PYTHONPATH']
+
+    def test_cli_models_only(self):
+        argl = self.argl + ["first.tgf", "second.tgf", "third.tgf"]
+        self.assertEqual(subprocess.call(argl), 0)
+
+    def test_cli_models_with_actor(self):
+        argl = self.argl + [
+            "first.tgf", "second.tgf", "third.tgf", 'graphwalker.dummy.Mute']
+        self.assertEqual(subprocess.call(argl), 0)
 
     def test_by_interaction(self):
         """Interaction self-test.
