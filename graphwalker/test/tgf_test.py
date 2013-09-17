@@ -28,7 +28,7 @@ n2 n3 e_two
              ['n3', 'v_c']])
 
         self.assertEqual(
-            sorted(edges),
-            [('e0', 'e_zero', 'n0', 'n1'),
-             ('e1', 'e_one', 'n1', 'n2'),
-             ('e2', 'e_two', 'n2', 'n3')])
+            edges,
+            [('e_zero', 'e_zero', 'n0', 'n1'),
+             ('e_one', 'e_one', 'n1', 'n2'),
+             ('e_two', 'e_two', 'n2', 'n3')])
