@@ -26,6 +26,25 @@ class TestEdge(unittest.TestCase):
         self.assertEqual(c.id, 'new')
         self.assertEqual(e[1:], c[1:])
 
+    def test_combine(self):
+        e1 = ee('e0', 'edge0', 'src', 'tgt')
+        e2 = ee('e0', 'edge0', 'src', 'tgt')
+        self.assertEqual(
+            e1.combine(e2),
+            ee('e0', 'edge0', 'src', 'tgt'))
+
+    def test_combine_with_extra(self):
+        e1 = ee('e0', 'edge0', 'src', 'tgt', {'a': 1})
+        e2 = ee('e0', 'edge0', 'src', 'tgt', {'b': 2})
+        self.assertEqual(
+            e1.combine(e2),
+            ee('e0', 'edge0', 'src', 'tgt', {'a': 1, 'b': 2}))
+
+    def test_combine_fail(self):
+        e1 = ee('e0', 'edge0', 'src', 'tgt', {'a': 1})
+        e2 = ee('e0', 'edge0', 'sow', 'tgt', {'b': 2})
+        self.assertRaises(AssertionError, e1.combine, e2)
+
 
 class TestVert(unittest.TestCase):
     def test_ctor_smoke(self):
@@ -45,6 +64,22 @@ class TestVert(unittest.TestCase):
         self.assertTrue(type(s) is str)
         self.assertTrue('id' in s)
         self.assertTrue('name' in s)
+
+    def test_combine_equal(self):
+        v1 = vv('v0', 'vert0', (), ())
+        v2 = vv('v0', 'vert0', (), ())
+        self.assertEqual(
+            v1.combine(v2),
+            vv('v0', 'vert0', (), ()))
+
+    def test_combine_add_edges(self):
+        v1 = vv('v0', 'vert0', (ee('e0', 'edge0', 'v0', 'v1'),), ())
+        v2 = vv('v0', 'vert0', (), (ee('e1', 'edge1', 'v1', 'v0'),))
+        self.assertEqual(
+            v1.combine(v2),
+            vv('v0', 'vert0',
+               (ee('e0', 'edge0', 'v0', 'v1'),),
+               (ee('e1', 'edge1', 'v1', 'v0'),)))
 
 
 g0p = ee('p', 'p', 'a', 'b')
@@ -240,6 +275,12 @@ class TestGraph(unittest.TestCase):
     def test_eulerize_eulerian(self):
         g0 = build_graph('ab ac ba bc ca cb')
         self.assertEqual(None, g0.eulerize())
+
+    def test_combine(self):
+        g1 = build_graph('ab ac bd cd')
+        g2 = build_graph('de ea')
+        g3 = g1.combine(g2)
+        self.assertEqual(g3, build_graph('ab ac bd cd de ea'))
 
 
 class TestGraphIO(unittest.TestCase):

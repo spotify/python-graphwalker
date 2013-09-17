@@ -25,6 +25,19 @@ def parse_name(name, extra=None):
     return name, extra
 
 
+def merge_extras(left, right):
+    if left is None:
+        return right
+    elif right is None:
+        return left
+    else:
+        new_extra = dict(left)
+        for k, v in right.items():
+            assert v == new_extra.setdefault(k, v), (
+                'Extra attribute mismatch in combined vertices')
+        return new_extra
+
+
 class Edge(EdgeBase):
     def __new__(cls, id, name, src, tgt, extra=None):
         name, extra = parse_name(name, extra)
@@ -38,6 +51,15 @@ class Edge(EdgeBase):
 
     def clone(self, new_id):
         return Edge(new_id, self.name, self.src, self.tgt)
+
+    def combine(self, other):
+        for attr in ('id', 'name', 'src', 'tgt'):
+            assert getattr(self, attr) == getattr(other, attr), (
+                '%s mismatch in combined edges' % attr)
+
+        new_extra = merge_extras(self.extra, other.extra)
+
+        return Edge(self.id, self.name, self.src, self.tgt, new_extra)
 
 
 class Vert(VertBase):
@@ -62,6 +84,25 @@ class Vert(VertBase):
                     [e for e in self.incoming if e.id != e_id],
                     self.extra)
 
+    def combine(self, other):
+        if other is None or self == other:
+            return self
+
+        assert self.id == other.id, 'ID mismatch in combined vertices'
+        assert self.name == other.name, 'Name mismatch in combined vertices'
+
+        new_extra = merge_extras(self.extra, other.extra)
+
+        new_outgoing = (
+            tuple(self.outgoing) +
+            tuple([e for e in other.outgoing if e not in self.outgoing])
+        )
+        new_incoming = (
+            tuple(self.incoming) +
+            tuple([e for e in other.incoming if e not in self.incoming])
+        )
+        return Vert(self.id, self.name, new_outgoing, new_incoming, new_extra)
+
 
 class Graph(object):
     vert_cls, edge_cls = Vert, Edge
@@ -71,6 +112,9 @@ class Graph(object):
         self.V = (V if V is not None else {})
         self.E = (E if E is not None else {})
         self.d = d
+
+    def __eq__(self, other):
+        return self.V == other.V and self.E == other.E
 
     def sanity_check(self):
         for e_id, edge in self.E.items():
@@ -86,6 +130,20 @@ class Graph(object):
                 assert edge is self.E.get(edge.id)
 
         return True
+
+    def combine(self, other):
+        new_V = dict(self.V)
+        for v_id, vert in other.V.items():
+            new_V[v_id] = vert.combine(new_V.get(v_id, None))
+
+        new_E = dict(self.E)
+        for e_id, edge in other.E.items():
+            if e_id not in new_E:
+                new_E[e_id] = edge
+            else:
+                assert edge == new_E[e_id], 'Edge mismatch in combined graphs'
+
+        return Graph(new_V, new_E)
 
     def copy(self):
         return Graph(dict(self.V), dict(self.E), self.d)
