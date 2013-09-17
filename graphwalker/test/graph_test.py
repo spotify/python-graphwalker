@@ -227,6 +227,20 @@ class TestGraph(unittest.TestCase):
         g0.eulerize()
         self.assertEqual(g0.odd_verts(), ([], []))
 
+    def test_eulerize_with_dupes(self):
+        g0 = build_graph('ab ac bd cd de ea ea')
+        self.assertEqual(g0.odd_verts(), (['d'], ['e']))
+        g0.eulerize()
+        self.assertEqual(g0.odd_verts(), ([], []))
+
+    def test_eulerize_fail_sink(self):
+        g0 = build_graph('ab ac bd cd')
+        self.assertRaises(AssertionError, g0.eulerize)
+
+    def test_eulerize_eulerian(self):
+        g0 = build_graph('ab ac ba bc ca cb')
+        self.assertEqual(None, g0.eulerize())
+
 
 class TestGraphIO(unittest.TestCase):
     class GraphSub(graph.Graph):
