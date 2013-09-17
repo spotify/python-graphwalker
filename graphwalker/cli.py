@@ -21,12 +21,13 @@ Usage:
                 [--test-name=some_random_name]
                 [--debug]
                 [--debugger=mod.class:a,b,ka=va,kb=vb]
-                <model> [<actor>]
+                <model/actor>...
     graphwalker -h|--help
 
-Model is normally a graph file
+Model is the graph file
 
-Actor is the code module or class
+Actor is the code module or class.
+  The default is 'graphwalker.dummy.Mute', which does nothing.
 
 Built-in stopconds, defaults:
   Never
@@ -60,19 +61,21 @@ Example:
     graphwalker \\
       --reporter=Print:output=stderr --reporter=Log \\
       --planner=Goto:wake,happy,sad --planner=Interactive \\
-      --stop=Coverage:edges=100
+      --stop=Coverage:edges=100 \\
       model.dot fleb.Fleb
 """
 
 
 def run(args):
     sys.path.append('')
+    modact = args['<model/actor>']
+    assert len(modact) > 1
 
     reporter = reporting.build(args.get('--reporter') or [])
     suite_name = args.get('--suite-name') or 'graphwalker'
 
     test_name = args.get('--test-name') or (
-        args['<model>'].rsplit('/', 1)[-1].split('.')[0] + '-' +
+        modact[0].rsplit('/', 1)[-1].split('.')[0] + '-' +
         time.strftime('%Y%m%d%H%M%S'))
 
     reporter.start_suite(suite_name)
@@ -80,9 +83,15 @@ def run(args):
     plan = planning.build(args.get('--planner') or ['Random'])
     stop = stopcond.build(args.get('--stopcond') or 'Coverage')
 
-    model = graph.Graph.read(args['<model>'])
+    model = graph.Graph.read(modact[0])
+    for n in modact[1:-1]:
+        model = model.combine(graph.Graph.read(n))
 
-    actor = args.get('<actor>') or 'graphwalker.dummy.Mute'
+    try:
+        model = model.combine(graph.Graph.read(modact[-1]))
+        actor = 'graphwalker.dummy.Mute'
+    except:
+        actor = modact[-1]
 
     debugger = args.get('--debug') and args.get('--debugger')
 
