@@ -1,0 +1,22 @@
+Source: python-graphwalker
+Section: devel
+Priority: optional
+Maintainer: Anders Eurenius <aes@spotify.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+Homepage: http://github.com/spotify/python-graphwalker
+Vcs-Git: https://github.com/spotify/python-graphwalker.git
+Vcs-Browser: http://github.com/spotify/python-graphwalker
+
+Package: python-graphwalker
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: python-docopt
+Suggests: python-pydot
+Description: tool for testing based on finite state machine graphs.
+ Python-Graphwalker is a tool for testing based on finite state machine
+ graphs. Graphwalker reads FSMs specified by graphs, plans paths, calls model
+ methods by name from graph labels and reports progress and results.
+ .
+ While conceptually derived from the Graphwalker projectgw, (implemented in
+ java) this is a complete reimplementation from that initial concept.
