@@ -86,7 +86,7 @@ class Print(ReportingPlugin):
 
 
 class Log(Print):
-    getLogger = logging.getLogger
+    getLogger = staticmethod(logging.getLogger)
     levels = dict(
         (n, getattr(logging, n))
         for n in 'FATAL CRITICAL ERROR WARNING WARN INFO DEBUG'.split())
