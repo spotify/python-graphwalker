@@ -13,16 +13,22 @@ def deserialize(d, **kw):
 
     dot = dot_parser.parse_dot_data(d)
 
-    verts = [(unquote(node.get_name()),
-              unquote(node.get_label() or node.get_name()))
-             for node in dot.get_nodes()
-             if node.get_name() not in ('graph', 'node', 'edge')]
+    verts = dict((unquote(node.get_name()),
+                  unquote(node.get_label() or node.get_name()))
+                 for node in dot.get_nodes()
+                 if node.get_name() not in ('graph', 'node', 'edge'))
 
     edges = [(seqno(),
               unquote(link.get_label()),
               unquote(link.get_source()),
               unquote(link.get_destination()))
              for link in dot.get_edges()]
+
+    for i, l, s, t in edges:
+        verts.setdefault(s, s)
+        verts.setdefault(t, t)
+
+    verts = verts.items()
 
     if dot.get_graph_type() == 'graph':
         # add back-edges to be equivalent to undirected graph
