@@ -109,14 +109,13 @@ def run(args):
     reporter.end_suite()
 
 
-def main():
+def main(argv):
     import logging
-    import sys
 
     logging.basicConfig(level=logging.INFO)
-    args = docopt.docopt(usage, sys.argv[1:])
+    args = docopt.docopt(usage, argv[1:])
     run(args)
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)

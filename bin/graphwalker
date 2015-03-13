@@ -4,4 +4,5 @@
 from graphwalker import cli
 
 if __name__ == '__main__':
-    cli.main()
+    import sys
+    cli.main(sys.argv)
