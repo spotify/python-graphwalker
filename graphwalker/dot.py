@@ -26,7 +26,7 @@ def deserialize(d, **kw):
 
     if dot.get_graph_type() == 'graph':
         # add back-edges to be equivalent to undirected graph
-        edges.extend([(seqno(), l, d, s) for i, l, s, d in edges])
+        edges.extend([(seqno(), l, t, s) for i, l, s, t in edges])
 
     return verts, edges
 
