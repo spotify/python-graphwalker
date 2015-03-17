@@ -10,7 +10,7 @@ import os
 class Dummy(object):
     def __getattr__(self, name):
         def f(*al, **kw):
-            print '\033[32m%s\033[0m' % name
+            print ('\033[32m%s\033[0m' % name)
         f.__name__ = name
         return f
 
@@ -82,13 +82,13 @@ class Interactor(object):
     def expect(self, expectation):
         def show():
             if out:
-                print 'out' + ' -' * 30
-                print '\n    ' + out.strip().replace('\n', '\n    ')
+                print ('out' + ' -' * 30)
+                print ('\n    ' + out.strip().replace('\n', '\n    '))
             if err:
-                print 'err' + ' -' * 30
-                print '\n    ' + err.strip().replace('\n', '\n    ')
+                print ('err' + ' -' * 30)
+                print ('\n    ' + err.strip().replace('\n', '\n    '))
             if out or err:
-                print '- -' + ' -' * 30
+                print ('- -' + ' -' * 30)
 
         if type(expectation) is str:
             x = expectation

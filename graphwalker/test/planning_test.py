@@ -211,7 +211,7 @@ class TestRandom(TestEvenRandom):
         ]
         if plan != l:
             for i in range(min(len(plan), len(l))):
-                print i, "=!"[plan[i] != l[i]], plan[i], l[i]
+                print (i, "=!"[plan[i] != l[i]], plan[i], l[i])
 
         self.assertEqual(plan, l)
 
@@ -226,7 +226,7 @@ class TestRandom(TestEvenRandom):
 
         if r.calls != calls:
             for i in range(min(len(r.calls), len(calls))):
-                print i, "=!"[r.calls[i] != calls[i]], r.calls[i], calls[i]
+                print (i, "=!"[r.calls[i] != calls[i]], r.calls[i], calls[i])
 
         self.assertEqual(p.rng.calls, calls)
 
@@ -257,7 +257,7 @@ class TestEuler(unittest.TestCase):
         p.forced_plan = lambda *al: None
         try:
             p(g, EhmNo(), 'a', '<context>')
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEqual(e.args, ("Graph is not Eulerian",))
         else:
             self.assert_(False, "Expected exception")
@@ -268,7 +268,7 @@ class TestEuler(unittest.TestCase):
         p.forced_plan = lambda *al: None
         try:
             p(g, EhmNo(), 'a', '<context>')
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEqual(e.args, ("Graph is not connected",))
         else:
             self.assert_(False, "Expected exception")

@@ -34,7 +34,7 @@ class TestExecutor(unittest.TestCase):
         diff = False
         for i in range(min(len(l), len(m))):
             if l[i] != m[i]:
-                print i, l[i], '!=\n ', m[i]
+                print (i, l[i], '!=\n ', m[i])
                 diff = True
 
         self.assertEqual(len(l), len(m))

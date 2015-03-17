@@ -47,7 +47,7 @@ class Executor(object):
             try:
                 self.last = item
                 self.call(item[1])
-            except Exception, e:
+            except Exception as e:
                 self.log.exception('failure in %r' % item[1])
                 debugger = getattr(self.debugger, 'set_trace', self.debugger)
                 if callable(debugger):

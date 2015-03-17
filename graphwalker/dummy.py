@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 class Talker(object):
     def __getattr__(self, k):
         def f(*al, **kw):
-            print '\033[32m%s\033[0m' % k
+            print ('\033[32m%s\033[0m' % k)
             assert k != 'fail', 'Fail because we were asked to'
         f.__name__ = k
         return f

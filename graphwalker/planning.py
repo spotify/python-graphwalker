@@ -249,7 +249,7 @@ q(uit)  End the interactive session
                 return None
             except EOFError:
                 return None
-            except Exception, e:
+            except Exception as e:
                 print >>self.out, 'huh? %r' % e
 
     choose_fn = choose
@@ -332,7 +332,7 @@ q(uit)  End the interactive session
                     try:
                         self.vert = self.choose_vert(i.split()[-1])
                         break
-                    except Exception, e:
+                    except Exception as e:
                         print >>self.out, 'huh? %r' % e
 
             elif i[0] in 'h?':
