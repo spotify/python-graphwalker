@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='graphwalker',
-    version='1.0.2',
+    version='1.0.3',
     maintainer='Anders Eurenius',
     maintainer_email='aes@spotify.com',
     packages=['graphwalker', 'graphwalker.test'],
