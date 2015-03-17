@@ -1,0 +1,11 @@
+d v_d
+x v_x
+y v_y
+a v_a
+#
+d x dx
+d y dx
+x y xy
+y x yx
+x a xa
+y a yz

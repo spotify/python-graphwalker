@@ -26,12 +26,14 @@ class TestInteraction(unittest.TestCase):
             del os.environ['PYTHONPATH']
 
     def test_cli_models_only(self):
-        argl = self.argl + ["first.tgf", "second.tgf", "third.tgf"]
+        ex = "graphwalker/test/examples/%s.tgf"
+        argl = self.argl + [ex % w for w in ("first", "second", "third")]
         self.assertEqual(subprocess.call(argl), 0)
 
     def test_cli_models_with_actor(self):
-        argl = self.argl + [
-            "first.tgf", "second.tgf", "third.tgf", 'graphwalker.dummy.Mute']
+        ex = "graphwalker/test/examples/%s.tgf"
+        argl = self.argl + [ex % w for w in ("first", "second", "third")]
+        argl = argl + ['graphwalker.dummy.Mute']
         self.assertEqual(subprocess.call(argl), 0)
 
     def test_by_interaction(self):
