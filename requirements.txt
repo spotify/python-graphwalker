@@ -1,2 +1,2 @@
-[dot]pydot
-[cli]docopt
+pydot >= 1.0.2
+docopt >= 0.6.2
