@@ -91,6 +91,7 @@ class EvenRandom(Planner):
 
 
 class Random(EvenRandom):
+    """Walk through the graph by random edges until done."""
     def choose_edge(self, edges):
         naive, weighted = [], []
         for e in edges:
@@ -129,8 +130,8 @@ class Random(EvenRandom):
 
 
 class Euler(Planner):
+    """Walk through the graph by ordered edges until done."""
     def __call__(self, g, stop, start, context):
-        """Walk through the graph by ordered edges until done."""
         self._setup(g, stop, start, context)
 
         self.g = self.g.copy()
@@ -184,6 +185,7 @@ class Euler(Planner):
 
 
 class Goto(Planner):
+    """Plan direct path to goal state(s), repeating [repeat] times."""
     def __init__(self, *al, **kw):
         self.al, self.kw = al, kw
         self.goals = self.al
