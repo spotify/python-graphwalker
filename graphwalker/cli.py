@@ -1,121 +1,163 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013 Spotify AB
-import time
-import sys
+# Copyright (c) 2015 Spotify AB
+"""Tool for testing based on finite state machine graphs.
 
-import docopt
+Graphwalker reads FSMs specified by graphs, plans paths, calls model
+methods by name from graph labels and reports progress and results.
 
-from graphwalker import planning
-from graphwalker import stopcond
-from graphwalker import reporting
-from graphwalker import executor
-from graphwalker import graph
+While conceptually derived from the Graphwalker project[gw],
+(implemented in java) this is a complete reimplementation from that
+initial concept.
 
-usage = """\
-Usage:
-    graphwalker [--reporter=mod.class:a,b,ka=va,kb=vb]...
-                [--stopcond=mod.class:a,b,ka=va,kb=vb]
-                [--planner=mod.class:a,b,ka=va,kb=vb]...
-                [--suite-name=some_random_name]
-                [--test-name=some_random_name]
-                [--debug]
-                [--debugger=mod.class:a,b,ka=va,kb=vb]
-                <model/actor>...
-    graphwalker -h|--help
-
-Model is the graph file
-
-Actor is the code module or class.
-  The default is 'graphwalker.dummy.Mute', which does nothing.
-
-Built-in stopconds, defaults:
-  Never
-  Seconds       30
-  SeenSteps     step,step,step          (also as steps=step,step,step)
-  CountSteps    100                     (also as steps=100)
-  Coverage      edges=100,verts=0       (verts also as vertices)
-
-  Coverage is the default stop condition.
-
-Built-in planners:
-  Random        (default)
-  Euler
-  Goto          step,step,step
-  Interactive
-
-Built-in reporters, defaults:
-  Print         output=sys.stdout
-  PathRecorder  path=".", name=test name, attach=False
-  Cartographer  dotpath=".", imgpath=".", imgtype="png", attach=False
-  Attachments   path="."
-
-Debugging:
-  --debug       drops you in a debugger if a test fails.
-                (set e to None before (c)ontinue, to continue the test
-  --debugger=X  set a different debugger, [default: pdb.Pdb]
-
-  Note that --debugger does not imply --debug.
-
-Example:
-    graphwalker \\
-      --reporter=Print:output=stderr --reporter=Log \\
-      --planner=Goto:wake,happy,sad --planner=Interactive \\
-      --stop=Coverage:edges=100 \\
-      model.dot fleb.Fleb
 """
 
+import argparse
+import time
 
-def run(args):
-    sys.path.append('')
-    modact = args['<model/actor>']
-    assert len(modact) > 1
+from graphwalker import executor
+from graphwalker import graph
+from graphwalker import planning
+from graphwalker import reporting
+from graphwalker import stopcond
 
-    reporter = reporting.build(args.get('--reporter') or [])
-    suite_name = args.get('--suite-name') or 'graphwalker'
+epilog = """
 
-    test_name = args.get('--test-name') or (
-        modact[0].rsplit('/', 1)[-1].split('.')[0] + '-' +
-        time.strftime('%Y%m%d%H%M%S'))
+Plugins are generally referenced in the form of "mod.Klass:a,b,ka=va,kb=vb",
+for a class Klass in the module mod, instantiated with arguments a and b and
+the keyword arguments ka and kb.
 
-    reporter.start_suite(suite_name)
+""".strip()
 
-    plan = planning.build(args.get('--planner') or ['Random'])
-    stop = stopcond.build(args.get('--stopcond') or 'Coverage')
 
-    model = graph.Graph.read(modact[0])
-    for n in modact[1:-1]:
+class ListAction(argparse.Action):
+    """Print list of plugins."""
+
+    def choose_thing(option):
+        if 'report' in option:
+            name, things = 'Reporters', reporting.reporters
+        elif 'plan' in option:
+            name, things = 'Planners', planning.planners
+        elif 'stop' in option or 'cond' in option:
+            name, things = 'Stop Conditions', stopcond.conditions
+
+        return name, things
+
+    def __call__(self, parser, ns, values, option, **kw):
+        name, things = self.choose_thing(option)
+
+        print '%s:' % name
+        print
+        for x in things:
+            print '  ' + x.__name__
+            print '    ' + x.__doc__.split('\n')[0]
+            print
+
+        ns.done = True
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser(epilog=epilog)
+    a = parser.add_argument
+
+    a('--suite-name', '--suite', dest='suite', nargs=1)
+    a('--test-name', '--test', dest='test', nargs=1)
+
+    a('--reporter', '--reporters', default=[],
+      dest='reporters', nargs=1, action='append', metavar='R')
+
+    a('--planner', '--planners',
+      dest='planners', nargs=1, action='append', metavar='P')
+
+    a('--stopcond', '--stop', '--until', default='Coverage',
+      dest='stop', metavar='C')
+
+    a('--debugger', dest='debugger', nargs=1, metavar='D')
+
+    a('--debug', action='store_true')
+
+    a('--list-reporters', action=ListAction, nargs=0)
+    a('--list-planners', action=ListAction, nargs=0)
+    a('--list-stopcond', action=ListAction, nargs=0)
+
+    a('--dry-run', '-n', dest='done', action='store_true')
+
+    a('modact', nargs='+', metavar='Model or Actor',
+      help="Need at least one of each")
+
+    return parser
+
+
+def load_model_actor(ns):
+    model = graph.Graph.read(ns.modact[0])
+    for n in ns.modact[1:-1]:
         model = model.combine(graph.Graph.read(n))
 
     try:
-        model = model.combine(graph.Graph.read(modact[-1]))
+        model = model.combine(graph.Graph.read(ns.modact[-1]))
         actor = 'graphwalker.dummy.Mute'
     except:
-        actor = modact[-1]
+        actor = ns.modact[-1]
 
-    debugger = args.get('--debug') and args.get('--debugger')
+    return model, actor
 
-    exe = executor.Executor(actor, reporter, debugger)
 
-    context = {'args': args, 'plan': plan, 'stop': stop, 'actor': actor,
-               'reporter': reporter, 'executor': exe, 'model': model,
-               'debugger': debugger}
-
+def run_context(ns, model, plan, reporter, stop, executor, context, **kw):
     stop.start(model, context)
+
     path = plan(model, stop, 'Start', context)
 
-    exe.run(test_name, path, context)
+    reporter.start_suite(ns.suite)
+
+    executor.run(ns.test, path, context)
 
     reporter.end_suite()
 
 
-def main(argv):
-    import logging
+def build(ns):
+    reporter = reporting.build(sum(ns.reporters, []))
 
-    logging.basicConfig(level=logging.INFO)
-    args = docopt.docopt(usage, argv[1:])
-    run(args)
+    ns.planners = ns.planners or [['Random']]
+    plan = planning.build(sum(ns.planners, []))
+
+    stop = stopcond.build(ns.stop)
+
+    model, actor = load_model_actor(ns)
+
+    debugger = ns.debug and ns.debugger
+
+    exe = executor.Executor(actor, reporter, debugger)
+
+    context = {
+        'suite': ns.suite, 'test': ns.test, 'ns': ns,
+        'model': model, 'actor': actor, 'debugger': debugger, 'executor': exe,
+        'plan': plan, 'stop': stop, 'reporter': reporter,
+    }
+    context['context'] = context
+
+    return context
+
+
+def name_test(ns):
+    ns.suite = ns.suite or 'graphwalker'
+
+    ns.test = ns.test or (ns.modact and (
+        ns.modact[0].rsplit('/', 1)[-1].split('.')[0] + '-') +
+        time.strftime('%Y%m%d%H%M%S'))
+
+
+def main(argv):
+    parser = arg_parser()
+    ns = parser.parse_args(argv[1:])
+    if getattr(ns, 'done', False):
+        return 0
+
+    name_test(ns)
+
+    context = build(ns)
+    return run_context(**context)
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    import sys
+    sys.exit(main(sys.argv))
