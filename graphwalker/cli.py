@@ -19,7 +19,7 @@ from graphwalker import execution
 from graphwalker import graph
 from graphwalker import planning
 from graphwalker import reporting
-from graphwalker import stopcond
+from graphwalker import halting
 
 epilog = """
 
@@ -39,7 +39,7 @@ class ListAction(argparse.Action):
         elif 'plan' in option:
             name, things = 'Planners', planning.planners
         elif 'stop' in option or 'cond' in option:
-            name, things = 'Stop Conditions', stopcond.conditions
+            name, things = 'Stop Conditions', halting.conditions
 
         return name, things
 
@@ -69,8 +69,8 @@ def arg_parser():
     a('--planner', '--planners',
       dest='planners', nargs=1, action='append', metavar='P')
 
-    a('--stopcond', '--stop', '--until', default='Coverage',
-      dest='stop', metavar='C')
+    a('--stopcond', '--halt', '--halter', '--stop', '--until',
+      default='Coverage', dest='stop', metavar='C')
 
     a('--debugger', dest='debugger', nargs=1, metavar='D')
 
@@ -78,7 +78,7 @@ def arg_parser():
 
     a('--list-reporters', action=ListAction, nargs=0)
     a('--list-planners', action=ListAction, nargs=0)
-    a('--list-stopcond', action=ListAction, nargs=0)
+    a('--list-stopcond', '--list-halter', action=ListAction, nargs=0)
 
     a('--dry-run', '-n', dest='done', action='store_true')
 
@@ -120,7 +120,7 @@ def build(ns):
     ns.planners = ns.planners or [['Random']]
     plan = planning.build(sum(ns.planners, []))
 
-    stop = stopcond.build(ns.stop)
+    stop = halting.build(ns.stop)
 
     model, actor = load_model_actor(ns)
 

@@ -5,7 +5,7 @@ import subprocess
 import unittest
 
 from graphwalker import planning
-from graphwalker import stopcond
+from graphwalker import halting
 from graphwalker import reporting
 from graphwalker import execution
 from graphwalker import graph
@@ -53,7 +53,7 @@ class TestInteraction(unittest.TestCase):
 
         reporter = HijackReporter()
         plan = planning.build(['Random'])
-        stop = stopcond.build('Coverage')
+        stop = halting.build('Coverage')
         model = graph.Graph.read('graphwalker/test/examples/selftest.graphml')
         actor = 'graphwalker.test.interactor.Interactor'
         exe = execution.Executor(actor, reporter)

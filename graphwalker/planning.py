@@ -6,7 +6,7 @@ import random
 import sys
 
 from graphwalker import codeloader
-from graphwalker import stopcond
+from graphwalker import halting
 
 # some ghetto enums
 COST, PATH = 0, 1
@@ -140,7 +140,7 @@ class Euler(Planner):
         self.forced_plan()
         self.g.eulerize()
 
-        self.stop = stopcond.Never().start(g, None)
+        self.stop = halting.Never().start(g, None)
         vert = self.vert
         seen = set()
 
@@ -264,7 +264,7 @@ q(uit)  End the interactive session
         self.al, self.kw = al, kw
 
     def goto(self, goals):
-        stop = stopcond.Never().start(self.g, self.context)
+        stop = halting.Never().start(self.g, self.context)
         return Goto(*goals)(self.g, stop, self.vert.id, self.context)
 
     def choose_vert(self, name):
