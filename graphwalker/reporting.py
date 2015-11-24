@@ -241,3 +241,10 @@ def build(specs):
                 call_by_default=True))
 
     return ReporterHerd(reporters=reporters)
+
+
+reporters = [cls
+             for cls in locals().values()
+             if type(cls) is type
+             and issubclass(cls, ReportingPlugin)
+             and cls is not ReportingPlugin]

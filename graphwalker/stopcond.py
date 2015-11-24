@@ -125,3 +125,11 @@ def build(spec):
         spec,
         default_module=__name__,
         call_by_default=True)
+
+
+conditions = [cls
+              for cls in locals().values()
+              if type(cls) is type
+              and issubclass(cls, StopCond)
+              and cls.__doc__
+              and cls is not StopCond]

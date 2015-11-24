@@ -383,3 +383,11 @@ def build(specs):
         return planners[0]
     else:
         return MasterPlan(planners)
+
+
+planners = [cls
+            for cls in locals().values()
+            if type(cls) is type
+            and issubclass(cls, Planner)
+            and cls.__doc__
+            and cls is not Planner]
