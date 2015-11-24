@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013 Spotify AB
-"""Parser for GML files
+"""Parser for GML files.
 
-# http://www.fim.uni-passau.de/fileadmin/files/lehrstuhl/\
-brandenburg/projekte/gml/gml-technical-report.pdf
+# http://www.fim.uni-passau.de/fileadmin/files/lehrstuhl/brandenburg/projekte/gml/gml-technical-report.pdf
 
 Grammar:
 
@@ -71,7 +70,7 @@ def build_vert(vl):
 
 
 def build_edge(el, serial):
-    e_id, e_name, e_src, e_tgt = 'e%d' % serial,  None, None, None
+    e_id, e_name, e_src, e_tgt = 'e%d' % serial, None, None, None
 
     for key, value in el:
         if key == 'label':

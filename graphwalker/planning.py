@@ -92,6 +92,7 @@ class EvenRandom(Planner):
 
 class Random(EvenRandom):
     """Walk through the graph by random edges until done."""
+
     def choose_edge(self, edges):
         naive, weighted = [], []
         for e in edges:
@@ -131,6 +132,7 @@ class Random(EvenRandom):
 
 class Euler(Planner):
     """Walk through the graph by ordered edges until done."""
+
     def __call__(self, g, stop, start, context):
         self._setup(g, stop, start, context)
 
@@ -186,6 +188,7 @@ class Euler(Planner):
 
 class Goto(Planner):
     """Plan direct path to goal state(s), repeating [repeat] times."""
+
     def __init__(self, *al, **kw):
         self.al, self.kw = al, kw
         self.goals = self.al
@@ -226,6 +229,7 @@ class Interactive(Planner):
     The protocol between choose and iterplan is deliberately kept simple to
     keep it simple to replace the choose method.
     """
+
     raw_input = raw_input
     out = sys.stderr
     debugger = pdb.Pdb('\t', sys.stdin, sys.stderr)

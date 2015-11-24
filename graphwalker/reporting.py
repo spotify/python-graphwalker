@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 
 class ReportingPlugin(object):
     """Common (optional) base or example for Graphwalker reporting plugins."""
+
     def __init__(self, **kw):
         self.context = kw
 
@@ -51,6 +52,7 @@ class ReportingPlugin(object):
 
 class Print(ReportingPlugin):
     """Print report to [output]; 'stdout', 'stderr' or object with write()."""
+
     outputs_map = {'stderr': sys.stderr, 'stdout': sys.stdout}
 
     def initiate(self, test_name):
@@ -88,6 +90,7 @@ class Print(ReportingPlugin):
 
 class Log(Print):
     """Log report to (name or object) [logger], at [level]."""
+
     getLogger = staticmethod(logging.getLogger)
     levels = dict(
         (n, getattr(logging, n))
@@ -116,6 +119,7 @@ class Log(Print):
 
 class PathRecorder(ReportingPlugin):
     """Report steps to a file at [path]/[name], saving attachments by name."""
+
     file = file
 
     def __init__(self, **kw):
@@ -143,6 +147,7 @@ class PathRecorder(ReportingPlugin):
 
 class Cartographer(ReportingPlugin):
     """Report graph and path steps to a graphviz file and run dot."""
+
     file = file
     system = os.system
     command = 'dot -T%(imgtype)s -o %(imgfname)s %(dotfname)s'
@@ -176,6 +181,7 @@ class Cartographer(ReportingPlugin):
 
 class Attachments(ReportingPlugin):
     """Save attachments to [path]/name."""
+
     file = file
 
     def attach_to_suite(self, name, data):

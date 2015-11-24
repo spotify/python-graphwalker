@@ -24,11 +24,13 @@ class StopCond(object):
 
 class Never(StopCond):
     """Never stop."""
+
     pass
 
 
 class Seconds(StopCond):
     """Stop after [timeout] (default: 30) seconds."""
+
     clock = time.time
 
     def __init__(self, *al, **kw):
@@ -50,6 +52,7 @@ class Seconds(StopCond):
 
 class SeenSteps(StopCond):
     """Stop when all given vertices have been visited."""
+
     def __init__(self, *al, **kw):
         self.targets = set(al)
 
@@ -63,6 +66,7 @@ class SeenSteps(StopCond):
 
 class CountSteps(StopCond):
     """Stop after [steps] steps."""
+
     def __init__(self, *al, **kw):
         self.i, self.n = 0, int(al[0]) if al else kw.get('steps', 100)
 
@@ -76,6 +80,7 @@ class CountSteps(StopCond):
 
 class Coverage(StopCond):
     """Stop after [vertices] or [edges] number of vertices/edges visited."""
+
     def __init__(self, *al, **kw):
         kw['verts'] = kw.pop('vertices', kw.get('verts', 0))
         self.edge_cov = min(1.0, float(kw.get('edges', 0)) / 100.0)

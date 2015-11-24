@@ -37,12 +37,12 @@ class TestInteraction(unittest.TestCase):
         self.assertEqual(subprocess.call(argl), 0)
 
     def test_by_interaction(self):
-        """Interaction self-test.
+        r"""Interaction self-test.
 
         For comparison, try this:
 
-            PYTHONPATH=. python graphwalker/cli.py --reporter=Print \\
-              graphwalker/test/examples/selftest.graphml \\
+            PYTHONPATH=. python graphwalker/cli.py --reporter=Print \
+              graphwalker/test/examples/selftest.graphml \
               graphwalker.test.interactor.Interactor
         """
         outer = self
