@@ -2,7 +2,7 @@
 # Copyright (c) 2013 Spotify AB
 import unittest
 
-from graphwalker import executor
+from graphwalker import execution
 
 
 class Fail(AssertionError):
@@ -41,10 +41,10 @@ class TestExecutor(unittest.TestCase):
         self.assert_(not diff, "Lists differ")
 
     def test_ctor_smoke(self):
-        executor.Executor(None, None)
+        execution.Executor(None, None)
 
     def build(self, actorclass=None):
-        e = executor.Executor((actorclass or Dummy)(), Dummy())
+        e = execution.Executor((actorclass or Dummy)(), Dummy())
         e.log = Dummy()
         return e
 

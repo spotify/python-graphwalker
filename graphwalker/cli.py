@@ -15,7 +15,7 @@ initial concept.
 import argparse
 import time
 
-from graphwalker import executor
+from graphwalker import execution
 from graphwalker import graph
 from graphwalker import planning
 from graphwalker import reporting
@@ -126,7 +126,7 @@ def build(ns):
 
     debugger = ns.debug and ns.debugger
 
-    exe = executor.Executor(actor, reporter, debugger)
+    exe = execution.Executor(actor, reporter, debugger)
 
     context = {
         'suite': ns.suite, 'test': ns.test, 'ns': ns,

@@ -7,7 +7,7 @@ import unittest
 from graphwalker import planning
 from graphwalker import stopcond
 from graphwalker import reporting
-from graphwalker import executor
+from graphwalker import execution
 from graphwalker import graph
 
 
@@ -56,7 +56,7 @@ class TestInteraction(unittest.TestCase):
         stop = stopcond.build('Coverage')
         model = graph.Graph.read('graphwalker/test/examples/selftest.graphml')
         actor = 'graphwalker.test.interactor.Interactor'
-        exe = executor.Executor(actor, reporter)
+        exe = execution.Executor(actor, reporter)
 
         context = {
             'plan': plan, 'stop': stop, 'actor': actor,
