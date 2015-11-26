@@ -33,7 +33,7 @@ the keyword arguments ka and kb.
 class ListAction(argparse.Action):
     """Print list of plugins."""
 
-    def choose_thing(option):
+    def choose_thing(self, option):
         if 'report' in option:
             name, things = 'Reporters', reporting.reporters
         elif 'plan' in option:
